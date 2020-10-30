@@ -10,6 +10,8 @@ services:
   use:
     - xenforo
     - discord
+  # The use of XenForo requires the MineLink XenForo add-on
+  # https://github.com/Ruinscraft/MineLink-XF
   xenforo:
     board-url: myxenforoboard.com
     api-key: abc1231

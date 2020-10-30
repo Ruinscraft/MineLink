@@ -3,28 +3,22 @@ package com.ruinscraft.minelink.service;
 import com.ruinscraft.minelink.LinkUser;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
+import java.util.List;
 
-public class DiscordService extends Service<Integer> {
-
+public class DiscordService extends Service {
     // TODO: use JDA or Discord4J
 
-    public DiscordService(Set<GroupMapping<Integer>> groupMappings) {
+    public DiscordService(List<GroupMapping> groupMappings) {
         super("discord", groupMappings);
     }
 
     @Override
-    protected void link(Player player, LinkUser linkUser) {
+    protected void link(Player player, LinkUser linkUser, String code) {
 
     }
 
     @Override
-    public void addGroup(Player player, String groupName) {
-
-    }
-
-    @Override
-    public void removeGroup(Player player, String groupName) {
+    protected void setGroups(String serviceAccountId, List<String> serviceGroupIds) {
 
     }
 

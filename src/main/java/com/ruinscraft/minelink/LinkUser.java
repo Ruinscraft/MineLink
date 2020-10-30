@@ -42,11 +42,11 @@ public class LinkUser {
         this.isPrivate = isPrivate;
     }
 
-    public <T> void addServiceAccount(ServiceAccount<T> account) {
+    public void addServiceAccount(ServiceAccount account) {
         serviceAccounts.put(account.getServiceName(), account);
     }
 
-    public <T> ServiceAccount<T> getServiceAccount(String serviceName) {
+    public ServiceAccount getServiceAccount(String serviceName) {
         return serviceAccounts.get(serviceName);
     }
 

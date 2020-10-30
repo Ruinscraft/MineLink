@@ -4,10 +4,9 @@ import com.ruinscraft.minelink.service.GroupMapping;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class LConfig {
 
@@ -28,12 +27,12 @@ public class LConfig {
     public String serviceXenforoApiKey = "abc123";
     public String serviceDiscordToken = "abc123";
 
-    public <T> Set<GroupMapping<T>> getGroupMappings(String serviceName) {
-        Set<GroupMapping<T>> groupMappings = new HashSet<>();
+    public List<GroupMapping> getGroupMappings(String serviceName) {
+        List<GroupMapping> groupMappings = new ArrayList<>();
         ConfigurationSection groupMappingsSection = plugin.getConfig().getConfigurationSection("services." + serviceName + ".group-mappings");
 
         for (String minecraftGroup : groupMappingsSection.getKeys(false)) {
-            Object serviceGroup = groupMappingsSection.get(minecraftGroup);
+            String serviceGroup = groupMappingsSection.getString(minecraftGroup);
             GroupMapping groupMapping = new GroupMapping(minecraftGroup, serviceGroup);
             groupMappings.add(groupMapping);
         }

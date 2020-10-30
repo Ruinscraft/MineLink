@@ -1,6 +1,7 @@
 package com.ruinscraft.minelink.storage;
 
 import com.ruinscraft.minelink.LinkUser;
+import com.ruinscraft.minelink.service.ServiceAccount;
 
 import java.sql.*;
 import java.util.UUID;
@@ -18,10 +19,9 @@ public abstract class SQLLinkUserStorage extends LinkUserStorage {
      *  link_user_accounts
      *      link_user_id        INT
      *      service_name        VARCHAR(32)
-     *      service_account     VARCHAR(64)
+     *      account_id     VARCHAR(64)
      *      linked_at           BIGINT
      */
-
     public SQLLinkUserStorage() throws Exception {
         createTables();
     }
@@ -55,9 +55,18 @@ public abstract class SQLLinkUserStorage extends LinkUserStorage {
                         LinkUser linkUser = new LinkUser(id, mojangId, _minecraftUsername, isPrivate);
 
                         // Load connected accounts
-                        try (PreparedStatement queryAccounts = connection.prepareStatement("")) {
-                            try (ResultSet accountsResult = queryAccounts.executeQuery()) {
+                        try (PreparedStatement queryAccounts = connection.prepareStatement("SELECT * FROM link_user_accounts WHERE link_user_id = ?;")) {
+                            queryAccounts.setInt(1, id);
 
+                            try (ResultSet accountsResult = queryAccounts.executeQuery()) {
+                                while (accountsResult.next()) {
+                                    String serviceName = accountsResult.getString("service_name");
+                                    String accountId = accountsResult.getString("account_id");
+                                    long linkedAt = accountsResult.getLong("linked_at");
+                                    ServiceAccount serviceAccount = new ServiceAccount(serviceName, accountId, linkedAt);
+
+                                    linkUser.addServiceAccount(serviceAccount);
+                                }
                             }
                         }
 

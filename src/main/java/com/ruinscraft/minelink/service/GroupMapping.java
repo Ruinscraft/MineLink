@@ -1,11 +1,11 @@
 package com.ruinscraft.minelink.service;
 
-public class GroupMapping<T> {
+public class GroupMapping {
 
     private final String minecraftGroup;
-    private final T serviceGroup;
+    private final String serviceGroup;
 
-    public GroupMapping(String minecraftGroup, T serviceGroup) {
+    public GroupMapping(String minecraftGroup, String serviceGroup) {
         this.minecraftGroup = minecraftGroup;
         this.serviceGroup = serviceGroup;
     }
@@ -14,7 +14,7 @@ public class GroupMapping<T> {
         return minecraftGroup;
     }
 
-    public T getServiceGroup() {
+    public String getServiceGroup() {
         return serviceGroup;
     }
 

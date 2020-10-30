@@ -4,14 +4,15 @@ import com.ruinscraft.minelink.LinkUser;
 import com.ruinscraft.minelink.MineLinkPlugin;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
+import java.util.List;
+import java.util.UUID;
 
-public abstract class Service<GROUPIDTYPE> {
+public abstract class Service {
 
     private final String name;
-    private final Set<GroupMapping<GROUPIDTYPE>> groupMappings;
+    private final List<GroupMapping> groupMappings;
 
-    public Service(String name, Set<GroupMapping<GROUPIDTYPE>> groupMappings) {
+    public Service(String name, List<GroupMapping> groupMappings) {
         this.name = name;
         this.groupMappings = groupMappings;
     }
@@ -20,12 +21,12 @@ public abstract class Service<GROUPIDTYPE> {
         return name;
     }
 
-    public Set<GroupMapping<GROUPIDTYPE>> getGroupMappings() {
+    public List<GroupMapping> getGroupMappings() {
         return groupMappings;
     }
 
-    public GROUPIDTYPE getServiceGroup(String minecraftGroup) {
-        for (GroupMapping<GROUPIDTYPE> mapping : groupMappings) {
+    public String getServiceGroup(String minecraftGroup) {
+        for (GroupMapping mapping : groupMappings) {
             if (mapping.getMinecraftGroup().equals(minecraftGroup)) {
                 return mapping.getServiceGroup();
             }
@@ -41,15 +42,19 @@ public abstract class Service<GROUPIDTYPE> {
             return LinkResult.ALREADY_LINKED;
         }
 
-        link(player, linkUser);
+        String code = generateCode();
+
+        link(player, linkUser, code);
 
         return LinkResult.OK;
     }
 
-    protected abstract void link(Player player, LinkUser linkUser);
+    protected abstract void link(Player player, LinkUser linkUser, String code);
 
-    public abstract void addGroup(Player player, String groupName);
+    protected abstract void setGroups(String serviceAccountId, List<String> serviceGroupIds);
 
-    public abstract void removeGroup(Player player, String groupName);
+    public static String generateCode() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 
 }

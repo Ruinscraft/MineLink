@@ -56,6 +56,10 @@ public abstract class LinkUserStorage {
         unload(player.getUniqueId());
     }
 
+    public void clearCache() {
+        cache.clear();
+    }
+
     public abstract CompletableFuture<Void> save(LinkUser linkUser);
 
     public abstract CompletableFuture<LinkUser> load(UUID mojangId);

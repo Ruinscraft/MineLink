@@ -38,7 +38,7 @@ public class LinkCommandExecutor implements CommandExecutor {
             return true;
         }
 
-        service.link(player);
+        service.link(player, mineLink);
 
         return true;
     }

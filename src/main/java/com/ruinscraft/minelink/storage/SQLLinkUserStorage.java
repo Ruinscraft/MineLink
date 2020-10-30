@@ -22,7 +22,6 @@ public abstract class SQLLinkUserStorage extends LinkUserStorage {
      *      linked_at           BIGINT
      */
 
-
     public SQLLinkUserStorage() throws Exception {
         createTables();
     }
@@ -31,24 +30,51 @@ public abstract class SQLLinkUserStorage extends LinkUserStorage {
     public CompletableFuture<Void> save(LinkUser linkUser) {
         return CompletableFuture.runAsync(() -> {
             try (Connection connection = getConnection()) {
-                try (PreparedStatement upsert = connection.prepareStatement("")) {
+                try (PreparedStatement upsert = connection.prepareStatement("INSERT INTO link_users () VALUES ();")) {
                     // Get auto incremented primary key if inserted
                 }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         });
     }
 
+    private LinkUser load0(String clause, String query) throws SQLException {
+        try (Connection connection = getConnection()) {
+            // Load LinkUser
+            try (PreparedStatement queryLinkUsers = connection.prepareStatement("SELECT * FROM link_users " + clause + ";")) {
+                queryLinkUsers.setString(1, query);
+
+                try (ResultSet linkUsersResult = queryLinkUsers.executeQuery()) {
+                    while (linkUsersResult.next()) {
+                        int id = linkUsersResult.getInt("id");
+                        UUID mojangId = UUID.fromString(linkUsersResult.getString("mojang_uuid"));
+                        String _minecraftUsername = linkUsersResult.getString("minecraft_username");
+                        boolean isPrivate = linkUsersResult.getBoolean("is_private");
+                        LinkUser linkUser = new LinkUser(id, mojangId, _minecraftUsername, isPrivate);
+
+                        // Load connected accounts
+                        try (PreparedStatement queryAccounts = connection.prepareStatement("")) {
+                            try (ResultSet accountsResult = queryAccounts.executeQuery()) {
+
+                            }
+                        }
+
+                        return linkUser;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public CompletableFuture<LinkUser> load(UUID mojangId) {
         return CompletableFuture.supplyAsync(() -> {
-            try (Connection connection = getConnection()) {
-                try (PreparedStatement query = connection.prepareStatement("SELECT * FROM link_users WHERE mojang_uuid = ?;")) {
-                    try (ResultSet result = query.executeQuery()) {
-
-                    }
-                }
+            try {
+                return load0("WHERE mojang_uuid = ?", mojangId.toString());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -60,12 +86,8 @@ public abstract class SQLLinkUserStorage extends LinkUserStorage {
     @Override
     public CompletableFuture<LinkUser> load(String minecraftUsername) {
         return CompletableFuture.supplyAsync(() -> {
-            try (Connection connection = getConnection()) {
-                try (PreparedStatement query = connection.prepareStatement("SELECT * FROM link_users WHERE minecraft_username = ?;")) {
-                    try (ResultSet result = query.executeQuery()) {
-
-                    }
-                }
+            try {
+                return load0("WHERE minecraft_username = ?", minecraftUsername);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

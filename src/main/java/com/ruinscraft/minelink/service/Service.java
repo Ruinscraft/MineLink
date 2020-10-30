@@ -1,5 +1,7 @@
 package com.ruinscraft.minelink.service;
 
+import com.ruinscraft.minelink.LinkUser;
+import com.ruinscraft.minelink.MineLinkPlugin;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
@@ -32,7 +34,19 @@ public abstract class Service<GROUPIDTYPE> {
         return null;
     }
 
-    public abstract void link(Player player);
+    public LinkResult link(Player player, MineLinkPlugin mineLink) {
+        LinkUser linkUser = mineLink.getLinkUserStorage().getLinkUser(player);
+
+        if (linkUser.getServiceAccount(name) != null) {
+            return LinkResult.ALREADY_LINKED;
+        }
+
+        link(player, linkUser);
+
+        return LinkResult.OK;
+    }
+
+    protected abstract void link(Player player, LinkUser linkUser);
 
     public abstract void addGroup(Player player, String groupName);
 

@@ -1,5 +1,6 @@
 package com.ruinscraft.minelink.service;
 
+import com.ruinscraft.minelink.LinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -32,10 +33,8 @@ public class XenforoService extends Service<Integer> {
     }
 
     @Override
-    public void link(Player player) {
+    protected void link(Player player, LinkUser linkUser) {
 
-
-        player.sendMessage(ChatColor.GOLD + "Please visit this URL to link your account: ");
     }
 
     @Override

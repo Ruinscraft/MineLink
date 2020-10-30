@@ -76,13 +76,11 @@ public class MineLinkPlugin extends JavaPlugin {
 
         /* Register listeners */
         getServer().getPluginManager().registerEvents(new JoinQuitListener(this), this);
-
-
     }
 
     @Override
     public void onDisable() {
-
+        linkUserStorage.clearCache();
     }
 
 }

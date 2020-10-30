@@ -1,0 +1,23 @@
+storage:
+  type: mysql
+  mysql:
+    host: localhost
+    port: 3306
+    database: minelink
+    username: root
+    password: password
+services:
+  use:
+    - xenforo
+    - discord
+  xenforo:
+    board-url: myxenforoboard.com
+    api-key: abc1231
+    group-mappings:
+      donator: 3
+      moderator: 2
+  discord:
+    token: abc123
+    group-mappings:
+      donator: 159344286870413633
+      moderator: 147746586870446421

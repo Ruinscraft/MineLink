@@ -1,0 +1,11 @@
+main: ${mainClass}
+name: ${name}
+version: ${version}
+api-version: 1.13
+author: royalkingkb
+commands:
+  link:
+    description: Link external accounts
+  linkinfo:
+    description: Show another user's linked accounts
+

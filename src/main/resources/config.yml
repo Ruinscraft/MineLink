@@ -13,7 +13,7 @@ services:
   # The use of XenForo requires the MineLink XenForo add-on
   # https://github.com/Ruinscraft/MineLink-XF
   xenforo:
-    board-url: myxenforoboard.com
+    board-url: https://myxenforoboard.com
     api-key: abc1231
     group-mappings:
       donator: 3

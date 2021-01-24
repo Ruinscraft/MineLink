@@ -1,6 +1,5 @@
 package com.ruinscraft.minelink.service;
 
-import com.ruinscraft.minelink.LinkUser;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -36,8 +35,8 @@ public class XenforoService extends Service {
     }
 
     @Override
-    protected void link(Player player, LinkUser linkUser, String code) {
-        // PUT  http://board.com/api/minelink/codes/<code>
+    protected void link(Player player, String code) {
+        // PUT  https://board.com/api/minelink/codes/<code>
         // Headers: [XF-Api-Key => <XfKey>]
         CompletableFuture.runAsync(() -> {
             try {

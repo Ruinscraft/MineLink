@@ -6,6 +6,3 @@ author: royalkingkb
 commands:
   link:
     description: Link external accounts
-  linkinfo:
-    description: Show another user's linked accounts
-

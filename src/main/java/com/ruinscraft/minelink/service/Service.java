@@ -1,11 +1,12 @@
 package com.ruinscraft.minelink.service;
 
-import com.ruinscraft.minelink.LinkUser;
+import com.ruinscraft.minelink.LinkedAccount;
 import com.ruinscraft.minelink.MineLinkPlugin;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class Service {
 
@@ -35,21 +36,25 @@ public abstract class Service {
         return null;
     }
 
-    public LinkResult link(Player player, MineLinkPlugin mineLink) {
-        LinkUser linkUser = mineLink.getLinkUserStorage().getLinkUser(player);
+    public CompletableFuture<LinkResult> link(Player player, MineLinkPlugin mineLink) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<LinkedAccount> linkedAccounts = mineLink.getMineLinkStorage().queryLinkedAccounts(player.getUniqueId()).join();
 
-        if (linkUser.getServiceAccount(name) != null) {
-            return LinkResult.ALREADY_LINKED;
-        }
+            for (LinkedAccount linkedAccount : linkedAccounts) {
+                if (linkedAccount.getServiceName().equals(getName())) {
+                    return LinkResult.ALREADY_LINKED;
+                }
+            }
 
-        String code = generateCode();
+            String code = generateCode();
 
-        link(player, linkUser, code);
+            link(player, code);
 
-        return LinkResult.OK;
+            return LinkResult.OK;
+        });
     }
 
-    protected abstract void link(Player player, LinkUser linkUser, String code);
+    protected abstract void link(Player player, String code);
 
     protected abstract void setGroups(String serviceAccountId, List<String> serviceGroupIds);
 

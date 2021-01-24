@@ -1,4 +1,4 @@
-package com.ruinscraft.minelink.command;
+package com.ruinscraft.minelink;
 
 import com.ruinscraft.minelink.MineLinkPlugin;
 import com.ruinscraft.minelink.service.Service;

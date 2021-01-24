@@ -1,10 +1,8 @@
 package com.ruinscraft.minelink;
 
-import com.ruinscraft.minelink.command.LinkCommandExecutor;
-import com.ruinscraft.minelink.command.LinkInfoCommandExecutor;
 import com.ruinscraft.minelink.service.*;
-import com.ruinscraft.minelink.storage.LinkUserStorage;
-import com.ruinscraft.minelink.storage.MySQLLinkUserStorage;
+import com.ruinscraft.minelink.storage.MineLinkStorage;
+import com.ruinscraft.minelink.storage.MySQLMineLinkStorage;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -12,15 +10,15 @@ import java.util.List;
 public class MineLinkPlugin extends JavaPlugin {
 
     private LConfig lConfig;
-    private LinkUserStorage linkUserStorage;
+    private MineLinkStorage mineLinkStorage;
     private ServiceManager serviceManager;
 
     public LConfig getlConfig() {
         return lConfig;
     }
 
-    public LinkUserStorage getLinkUserStorage() {
-        return linkUserStorage;
+    public MineLinkStorage getMineLinkStorage() {
+        return mineLinkStorage;
     }
 
     public ServiceManager getServiceManager() {
@@ -29,11 +27,11 @@ public class MineLinkPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Load config
         saveDefaultConfig();
         lConfig = new LConfig(this);
 
-        // Load services
+        serviceManager = new ServiceManager();
+
         for (String serviceName : lConfig.serviceUse) {
             switch (serviceName.toLowerCase()) {
                 case "xenforo":
@@ -56,7 +54,6 @@ public class MineLinkPlugin extends JavaPlugin {
             getLogger().info("Using service: " + service.getName());
         }
 
-        // Load storage
         if (lConfig.storageType.equals("mysql")) {
             String host = lConfig.storageMysqlHost;
             int port = lConfig.storageMysqlPort;
@@ -64,26 +61,12 @@ public class MineLinkPlugin extends JavaPlugin {
             String user = lConfig.storageMysqlUsername;
             String pass = lConfig.storageMysqlPassword;
 
-            try {
-                linkUserStorage = new MySQLLinkUserStorage(host, port, db, user, pass);
-            } catch (Exception e) {
-                throw new RuntimeException("Could not initialize mysql storage", e);
-            }
+            mineLinkStorage = new MySQLMineLinkStorage(host, port, db, user, pass);
         } else {
             throw new RuntimeException("No valid storage type defined");
         }
 
-        /* Register commands */
         getCommand("link").setExecutor(new LinkCommandExecutor(this));
-        getCommand("linkinfo").setExecutor(new LinkInfoCommandExecutor(this));
-
-        /* Register listeners */
-        getServer().getPluginManager().registerEvents(new JoinQuitListener(this), this);
-    }
-
-    @Override
-    public void onDisable() {
-        linkUserStorage.clearCache();
     }
 
 }

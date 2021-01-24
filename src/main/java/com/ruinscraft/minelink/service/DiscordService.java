@@ -1,6 +1,5 @@
 package com.ruinscraft.minelink.service;
 
-import com.ruinscraft.minelink.LinkUser;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public class DiscordService extends Service {
     }
 
     @Override
-    protected void link(Player player, LinkUser linkUser, String code) {
+    protected void link(Player player, String code) {
 
     }
 

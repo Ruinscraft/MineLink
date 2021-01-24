@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class MySQLLinkUserStorage extends SQLLinkUserStorage {
+public class MySQLMineLinkStorage extends SQLMineLinkStorage {
 
     private String host;
     private int port;
@@ -12,16 +12,18 @@ public class MySQLLinkUserStorage extends SQLLinkUserStorage {
     private String username;
     private String password;
 
-    public MySQLLinkUserStorage(String host, int port, String database, String username, String password) throws Exception {
+    public MySQLMineLinkStorage(String host, int port, String database, String username, String password) {
         this.host = host;
         this.port = port;
         this.database = database;
         this.username = username;
         this.password = password;
+
+        createTables();
     }
 
     @Override
-    protected Connection getConnection() throws SQLException {
+    public Connection createConnection() throws SQLException {
         String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + database;
         return DriverManager.getConnection(jdbcUrl, username, password);
     }

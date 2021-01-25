@@ -39,6 +39,11 @@ public class LinkCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
+        if (service.isPending(player.getUniqueId())) {
+            player.sendMessage(ChatColor.RED + "You have already requested a key for " + service.getName() + ".");
+            return true;
+        }
+
         service.link(player, mineLink);
 
         return true;

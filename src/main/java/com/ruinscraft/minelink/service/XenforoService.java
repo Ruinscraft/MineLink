@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ruinscraft.minelink.LinkedAccount;
 import com.ruinscraft.minelink.MineLinkPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -12,10 +13,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -73,6 +71,12 @@ public class XenforoService extends Service {
                         LinkedAccount linkedAccount = new LinkedAccount(mojangId, getName(), Long.toString(userId), System.currentTimeMillis());
                         mineLinkPlugin.getMineLinkStorage().saveLinkedAccount(linkedAccount);
                         pendingCodes.remove(mojangId);
+
+                        Player player = Bukkit.getPlayer(mojangId);
+
+                        if (player != null) {
+                            setGroups(mineLinkPlugin, player);
+                        }
                     }
                 }
             }
@@ -124,10 +128,31 @@ public class XenforoService extends Service {
     }
 
     @Override
-    public void setGroups(String serviceUserId, Set<String> serviceGroupIds) {
+    protected void setGroups0(String serviceAccountId, Set<String> groups) {
+        List<String> xenforoGroupIds = new ArrayList<>();
+
+        for (String group : groups) {
+            for (GroupMapping groupMapping : getGroupMappings()) {
+                if (groupMapping.getMinecraftGroup().equalsIgnoreCase(group)) {
+                    xenforoGroupIds.add(groupMapping.getServiceGroup());
+                }
+            }
+        }
+
+        if (xenforoGroupIds.isEmpty()) {
+            return;
+        }
+
+        // Example:
+        // https://board.com/api/users/<user_id>?api_bypass_permissions=1&secondary_group_ids[]=4&secondary_group_ids[]=5
         CompletableFuture.runAsync(() -> {
             try {
-                URL url = new URL(boardApiUrl + "/users/" + serviceUserId + "?secondary_group_ids=[" + String.join(",", serviceGroupIds) + "]");
+                StringBuilder stringBuilder = new StringBuilder(boardApiUrl + "/users/" + serviceAccountId + "?api_bypass_permissions=1");
+                for (String xenforoGroupId : xenforoGroupIds) {
+                    stringBuilder.append("&secondary_group_ids[]=" + xenforoGroupId);
+                }
+                System.out.println(stringBuilder.toString());
+                URL url = new URL(stringBuilder.toString());
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -137,6 +162,11 @@ public class XenforoService extends Service {
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    public boolean isPending(UUID mojangId) {
+        return pendingCodes.containsKey(mojangId);
     }
 
 }

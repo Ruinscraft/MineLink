@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class DiscordService extends Service {
     // TODO: use JDA or Discord4J
@@ -18,8 +19,13 @@ public class DiscordService extends Service {
     }
 
     @Override
-    public void setGroups(String serviceAccountId, Set<String> groups) {
+    protected void setGroups0(String serviceAccountId, Set<String> groups) {
 
+    }
+
+    @Override
+    public boolean isPending(UUID mojangId) {
+        return false;
     }
 
 }

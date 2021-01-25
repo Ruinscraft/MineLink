@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MineLinkStorage {
 
-    CompletableFuture<Void> insertLinkedAccount(LinkedAccount linkedAccount);
+    CompletableFuture<Void> saveLinkedAccount(LinkedAccount linkedAccount);
 
     CompletableFuture<List<LinkedAccount>> queryLinkedAccounts(UUID mojangId);
 

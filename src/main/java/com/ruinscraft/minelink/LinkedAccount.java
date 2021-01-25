@@ -1,5 +1,7 @@
 package com.ruinscraft.minelink;
 
+import com.ruinscraft.minelink.service.Service;
+
 import java.util.UUID;
 
 public class LinkedAccount {
@@ -30,6 +32,10 @@ public class LinkedAccount {
 
     public long getLinkedAt() {
         return linkedAt;
+    }
+
+    public Service getService(MineLinkPlugin mineLinkPlugin) {
+        return mineLinkPlugin.getServiceManager().getService(serviceName);
     }
 
 }

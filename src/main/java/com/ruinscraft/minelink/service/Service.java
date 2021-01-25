@@ -2,9 +2,11 @@ package com.ruinscraft.minelink.service;
 
 import com.ruinscraft.minelink.LinkedAccount;
 import com.ruinscraft.minelink.MineLinkPlugin;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -42,6 +44,10 @@ public abstract class Service {
 
             for (LinkedAccount linkedAccount : linkedAccounts) {
                 if (linkedAccount.getServiceName().equals(getName())) {
+                    if (player.isOnline()) {
+                        player.sendMessage(ChatColor.RED + "You already have linked your account to " + getName() + ".");
+                    }
+
                     return LinkResult.ALREADY_LINKED;
                 }
             }
@@ -56,7 +62,8 @@ public abstract class Service {
 
     protected abstract void link(Player player, String code);
 
-    protected abstract void setGroups(String serviceAccountId, List<String> serviceGroupIds);
+    // Run on player join
+    public abstract void setGroups(String serviceAccountId, Set<String> groups);
 
     public static String generateCode() {
         return UUID.randomUUID().toString().replace("-", "");

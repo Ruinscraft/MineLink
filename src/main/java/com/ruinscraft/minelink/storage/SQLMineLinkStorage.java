@@ -22,14 +22,16 @@ public abstract class SQLMineLinkStorage implements MineLinkStorage {
     }
 
     @Override
-    public CompletableFuture<Void> insertLinkedAccount(LinkedAccount linkedAccount) {
+    public CompletableFuture<Void> saveLinkedAccount(LinkedAccount linkedAccount) {
         return CompletableFuture.runAsync(() -> {
             try (Connection connection = createConnection()) {
-                try (PreparedStatement insert = connection.prepareStatement("INSERT INTO linked_accounts (mojang_id, service_name, service_account_id, linked_at) VALUES (?, ?, ?, ?);")) {
+                try (PreparedStatement insert = connection.prepareStatement("INSERT INTO linked_accounts (mojang_id, service_name, service_account_id, linked_at) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE service_account_id = ?, linked_at = ?;")) {
                     insert.setString(1, linkedAccount.getMojangId().toString());
                     insert.setString(2, linkedAccount.getServiceName());
                     insert.setString(3, linkedAccount.getServiceAccountId());
                     insert.setLong(4, linkedAccount.getLinkedAt());
+                    insert.setString(5, linkedAccount.getServiceAccountId());
+                    insert.setLong(6, linkedAccount.getLinkedAt());
                     insert.execute();
                 }
             } catch (SQLException e) {

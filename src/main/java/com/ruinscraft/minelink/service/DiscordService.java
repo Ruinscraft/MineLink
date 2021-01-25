@@ -3,6 +3,7 @@ package com.ruinscraft.minelink.service;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Set;
 
 public class DiscordService extends Service {
     // TODO: use JDA or Discord4J
@@ -17,7 +18,7 @@ public class DiscordService extends Service {
     }
 
     @Override
-    protected void setGroups(String serviceAccountId, List<String> serviceGroupIds) {
+    public void setGroups(String serviceAccountId, Set<String> groups) {
 
     }
 

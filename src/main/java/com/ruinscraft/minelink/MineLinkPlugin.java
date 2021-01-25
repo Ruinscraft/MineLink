@@ -3,6 +3,8 @@ package com.ruinscraft.minelink;
 import com.ruinscraft.minelink.service.*;
 import com.ruinscraft.minelink.storage.MineLinkStorage;
 import com.ruinscraft.minelink.storage.MySQLMineLinkStorage;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
@@ -12,10 +14,7 @@ public class MineLinkPlugin extends JavaPlugin {
     private LConfig lConfig;
     private MineLinkStorage mineLinkStorage;
     private ServiceManager serviceManager;
-
-    public LConfig getlConfig() {
-        return lConfig;
-    }
+    private LuckPerms luckPerms;
 
     public MineLinkStorage getMineLinkStorage() {
         return mineLinkStorage;
@@ -23,6 +22,10 @@ public class MineLinkPlugin extends JavaPlugin {
 
     public ServiceManager getServiceManager() {
         return serviceManager;
+    }
+
+    public LuckPerms getLuckPerms() {
+        return luckPerms;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class MineLinkPlugin extends JavaPlugin {
                     String xfUrl = lConfig.serviceXenforoBoardUrl;
                     String xfKey = lConfig.serviceXenforoApiKey;
                     List<GroupMapping> xfMappings = lConfig.getGroupMappings("xenforo");
-                    serviceManager.addService(new XenforoService(xfUrl, xfKey, xfMappings));
+                    serviceManager.addService(new XenforoService(xfUrl, xfKey, xfMappings, this));
                     break;
                 case "discord":
                     List<GroupMapping> discordMappings = lConfig.getGroupMappings("discord");
@@ -66,7 +69,13 @@ public class MineLinkPlugin extends JavaPlugin {
             throw new RuntimeException("No valid storage type defined");
         }
 
-        getCommand("link").setExecutor(new LinkCommandExecutor(this));
+        LinkCommand linkCommand = new LinkCommand(this);
+        getCommand("link").setExecutor(linkCommand);
+        getCommand("link").setTabCompleter(linkCommand);
+
+        luckPerms = LuckPermsProvider.get();
+
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
     }
 
 }

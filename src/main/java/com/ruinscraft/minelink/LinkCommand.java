@@ -1,18 +1,21 @@
 package com.ruinscraft.minelink;
 
-import com.ruinscraft.minelink.MineLinkPlugin;
 import com.ruinscraft.minelink.service.Service;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class LinkCommandExecutor implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class LinkCommand implements CommandExecutor, TabCompleter {
 
     private MineLinkPlugin mineLink;
 
-    public LinkCommandExecutor(MineLinkPlugin mineLink) {
+    public LinkCommand(MineLinkPlugin mineLink) {
         this.mineLink = mineLink;
     }
 
@@ -25,9 +28,7 @@ public class LinkCommandExecutor implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length < 1) {
-            mineLink.getServiceManager().getServices().forEach(service -> {
-                player.sendMessage(ChatColor.GOLD + service.getName());
-            });
+            player.sendMessage(ChatColor.RED + "/" + label + " <service>");
             return true;
         }
 
@@ -41,6 +42,21 @@ public class LinkCommandExecutor implements CommandExecutor {
         service.link(player, mineLink);
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        List<String> completions = new ArrayList<>();
+
+        if (args.length == 1) {
+            for (Service service : mineLink.getServiceManager().getServices()) {
+                if (service.getName().startsWith(args[0])) {
+                    completions.add(service.getName());
+                }
+            }
+        }
+
+        return completions;
     }
 
 }

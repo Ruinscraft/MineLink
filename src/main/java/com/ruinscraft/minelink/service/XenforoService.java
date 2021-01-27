@@ -39,7 +39,7 @@ public class XenforoService extends Service {
     private Map<UUID, String> pendingCodes;
 
     public XenforoService(String boardUrl, String apiKey, List<GroupMapping> groupMappings, MineLinkPlugin mineLinkPlugin) {
-        super("xenforo", groupMappings);
+        super("forum", groupMappings);
 
         if (boardUrl.endsWith("/")) {
             throw new RuntimeException("Board URL cannot end with a trailing /");
@@ -151,7 +151,6 @@ public class XenforoService extends Service {
                 for (String xenforoGroupId : xenforoGroupIds) {
                     stringBuilder.append("&secondary_group_ids[]=" + xenforoGroupId);
                 }
-                System.out.println(stringBuilder.toString());
                 URL url = new URL(stringBuilder.toString());
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
